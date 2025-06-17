@@ -34,17 +34,67 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #6b7280; /* bg-gray-500 */
             }
+        /* Дополнительные стили для улучшения внешнего вида */
+        .card-base {
+            background-color: #1f2937; /* bg-gray-800 */
+            border-radius: 1rem; /* rounded-2xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+            padding: 1.5rem; /* p-6 */
+        }
+        .input-field {
+            background-color: #374151; /* bg-gray-700 */
+            border: 1px solid #4b5563; /* border border-gray-600 */
+            border-radius: 0.5rem; /* rounded-lg */
+            padding: 0.5rem 0.75rem; /* py-2 px-3 */
+            color: #ffffff; /* text-white */
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-field:focus {
+            border-color: #06b6d4; /* focus:ring-cyan-500 */
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.5); /* focus:ring-2 focus:ring-emerald-500 (changed to cyan for consistency) */
+        }
+        /* Стили для уведомлений */
+        #notification-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 0.75rem; /* rounded-xl */
+            background-color: #10b981; /* bg-emerald-500 */
+            color: white;
+            font-weight: 600; /* font-semibold */
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-width: 200px;
+            text-align: center;
+        }
+        #notification-toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        #notification-toast.error {
+            background-color: #ef4444; /* bg-red-500 */
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white antialiased">
 
     <div id="app" class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
         
-        <header class="mb-8">
+        <header class="mb-8 text-center">
             <!-- Скорректирован размер заголовка -->
-            <h1 class="text-2xl sm:text-3xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">Финансовый трекер</h1>
-            <p class="text-center text-gray-400 mt-2 text-sm">Ваш личный дашборд для отслеживания всех активов.</p>
+            <h1 class="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">Финансовый трекер</h1>
+            <p class="text-gray-400 mt-2 text-sm">Ваш личный дашборд для отслеживания всех активов.</p>
         </header>
+
+        <!-- Всплывающее уведомление (Toast) -->
+        <div id="notification-toast" class="hidden"></div>
 
         <!-- Сводка (Dashboard) -->
         <div id="dashboard" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
@@ -112,23 +162,23 @@
                 
                 <div class="mb-4">
                     <label for="account-name" class="block text-gray-300 text-sm font-bold mb-2">Название счета</label>
-                    <input type="text" id="account-name" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" required>
+                    <input type="text" id="account-name" class="w-full input-field text-sm" required>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
                         <label for="account-amount" class="block text-gray-300 text-sm font-bold mb-2">Сумма</label>
-                        <input type="number" step="any" id="account-amount" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" required>
+                        <input type="number" step="any" id="account-amount" class="w-full input-field text-sm" required>
                     </div>
                     <div>
                         <label for="account-currency" class="block text-gray-300 text-sm font-bold mb-2">Валюта</label>
-                        <input type="text" id="account-currency" placeholder="RUB, USD, TON..." class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-white uppercase focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" required>
+                        <input type="text" id="account-currency" placeholder="RUB, USD, TON..." class="w-full input-field uppercase text-sm" required>
                     </div>
                 </div>
 
                 <div class="mb-6">
                     <label for="account-type" class="block text-gray-300 text-sm font-bold mb-2">Тип актива</label>
-                    <select id="account-type" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                    <select id="account-type" class="w-full input-field text-sm">
                         <option>Рубли</option>
                         <option>Валюта</option>
                         <option>Инвестиции</option>
@@ -138,7 +188,7 @@
                 
                 <div id="manual-rate-container" class="mb-6 hidden">
                     <label for="manual-rate" class="block text-gray-300 text-sm font-bold mb-2">Текущий курс к USD (вручную)</label>
-                    <input type="number" step="any" id="manual-rate" placeholder="Напр. 7.5 для TON" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                    <input type="number" step="any" id="manual-rate" placeholder="Напр. 7.5 для TON" class="w-full input-field text-sm">
                     <p class="text-xs text-gray-500 mt-1">Для активов, чей курс не определяется автоматически.</p>
                 </div>
 
@@ -197,7 +247,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Новые элементы для управления данными
         exportDataBtn: document.getElementById('export-data-btn'),
         importDataBtn: document.getElementById('import-data-btn'),
-        importFileInput: document.getElementById('import-file-input')
+        importFileInput: document.getElementById('import-file-input'),
+        // Элемент для уведомлений
+        notificationToast: document.getElementById('notification-toast')
     };
 
     // --- APPLICATION STATE ---
@@ -226,6 +278,30 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // --- FUNCTIONS ---
+
+    /**
+     * Shows a toast notification.
+     * @param {string} message The message to display.
+     * @param {string} type 'success' or 'error'. Defaults to 'success'.
+     */
+    const showNotification = (message, type = 'success') => {
+        app.notificationToast.textContent = message;
+        app.notificationToast.classList.remove('hidden', 'error');
+        if (type === 'error') {
+            app.notificationToast.classList.add('error');
+        }
+        // Force reflow for transition to work if element was hidden
+        void app.notificationToast.offsetWidth; 
+        app.notificationToast.classList.add('show');
+
+        setTimeout(() => {
+            app.notificationToast.classList.remove('show');
+            // Hide element completely after transition to prevent interaction issues
+            setTimeout(() => {
+                app.notificationToast.classList.add('hidden');
+            }, 300); // Match transition duration
+        }, 3000); // Display duration for 3 seconds
+    };
 
     /**
      * Formats a number as a currency string with the Ruble symbol.
@@ -304,9 +380,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
 
         app.dashboard.innerHTML = dashboardCards.map(card => `
-            <div class="bg-gray-800 p-4 rounded-xl shadow-lg">
+            <div class="card-base text-center">
                 <p class="text-xs text-gray-400">${card.icon} ${card.label}</p>
-                <p class="text-lg sm:text-xl font-bold tracking-tight">${formatRub(card.value)}</p>
+                <p class="text-lg sm:text-xl font-bold tracking-tight mt-1">${formatRub(card.value)}</p>
             </div>
         `).join('');
     };
@@ -316,22 +392,22 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const renderAccounts = () => {
         if (!state.accounts.length) {
-            app.accountsList.innerHTML = `<div class="text-center bg-gray-800 p-8 rounded-lg"><p class="text-gray-400 text-sm">У вас пока нет счетов.</p></div>`;
+            app.accountsList.innerHTML = `<div class="card-base text-center"><p class="text-gray-400 text-sm">У вас пока нет счетов.</p></div>`;
             return;
         }
         app.accountsList.innerHTML = state.accounts.map(acc => `
-            <div class="bg-gray-800 p-4 rounded-xl shadow-lg flex items-center justify-between space-x-4">
+            <div class="card-base flex items-center justify-between space-x-4 py-3 px-4">
                 <div class="flex-grow">
                     <p class="font-bold text-base">${acc.name}</p>
-                    <p class="text-gray-400 text-xs">${acc.type}</p>
+                    <p class="text-gray-400 text-xs mt-0.5">${acc.type}</p>
                 </div>
                 <div class="text-right">
                     <p class="font-semibold text-base">${formatCurrency(acc.amount, acc.currency)}</p>
-                    <p class="text-emerald-400 text-sm font-medium">${formatRub(convertToRub(acc))}</p>
+                    <p class="text-emerald-400 text-sm font-medium mt-0.5">${formatRub(convertToRub(acc))}</p>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button class="edit-btn p-2 text-gray-400 hover:text-white transition-colors" data-id="${acc.id}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
-                    <button class="delete-btn p-2 text-gray-400 hover:text-red-500 transition-colors" data-id="${acc.id}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+                    <button class="edit-btn p-2 text-gray-400 hover:text-white transition-colors rounded-full" data-id="${acc.id}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                    <button class="delete-btn p-2 text-gray-400 hover:text-red-500 transition-colors rounded-full" data-id="${acc.id}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
                 </div>
             </div>`).join('');
     };
@@ -341,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const renderLogs = () => {
         if (!state.logs.length) {
-            app.logsList.innerHTML = `<div class="text-center bg-gray-800 p-8 rounded-lg"><p class="text-gray-400 text-sm">История пока пуста. Нажмите "Зафиксировать остаток", чтобы сохранить текущий баланс.</p></div>`;
+            app.logsList.innerHTML = `<div class="card-base text-center"><p class="text-gray-400 text-sm">История пока пуста. Нажмите "Зафиксировать остаток", чтобы сохранить текущий баланс.</p></div>`;
             return;
         }
         // Sort logs by timestamp in descending order (most recent first)
@@ -364,22 +440,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }).filter(Boolean).join('');
 
             return `
-                <div class="bg-gray-800 p-3 rounded-xl flex flex-col justify-between items-start space-y-2">
+                <div class="card-base flex flex-col justify-between items-start space-y-2 py-3 px-4">
                     <div class="flex justify-between w-full items-center">
                         <p class="font-medium text-xs text-gray-300">${loggedDateTime}</p>
                         <p class="font-bold text-base ${totalDelta > 0 ? 'text-emerald-400' : (totalDelta < 0 ? 'text-red-400' : 'text-gray-400')}">
                             ${formatRub(log.total)}${formatDelta(totalDelta)}
                         </p>
                     </div>
-                    <div class="w-full text-xs">
+                    <div class="w-full text-xs grid grid-cols-2 gap-y-1 mt-2">
                         <p class="text-gray-400">Рубли: <span class="font-semibold">${formatRub(log.rubles)}${formatDelta(rublesDelta)}</span></p>
                         <p class="text-gray-400">Валюта: <span class="font-semibold">${formatRub(log.forex)}${formatDelta(forexDelta)}</span></p>
                         <p class="text-gray-400">Инвестиции: <span class="font-semibold">${formatRub(log.investments)}${formatDelta(investmentsDelta)}</span></p>
                         <p class="text-gray-400">Криптовалюта: <span class="font-semibold">${formatRub(log.crypto)}${formatDelta(cryptoDelta)}</span></p>
                     </div>
                     ${ratesHtml ? `
-                        <button class="toggle-rates-btn text-cyan-400 text-xs mt-2 self-end">Показать курсы</button>
-                        <ul class="rates-details hidden w-full list-disc list-inside pl-4 mt-2">
+                        <button class="toggle-rates-btn text-cyan-400 text-xs mt-2 self-end hover:underline focus:outline-none">Показать курсы</button>
+                        <ul class="rates-details hidden w-full list-disc list-inside pl-4 mt-2 space-y-1">
                             ${ratesHtml}
                         </ul>
                     ` : ''}
@@ -447,6 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url); // Clean up the object URL
+        showNotification('Данные успешно экспортированы!');
     };
 
     /**
@@ -470,14 +547,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     saveAccounts();
                     saveLogs();
                     renderAll();
-                    console.log('Данные успешно импортированы.');
+                    showNotification('Данные успешно импортированы!');
                 } else {
+                    showNotification('Неверный формат файла: отсутствует accounts или logs.', 'error');
                     console.error('Неверный формат файла: отсутствует accounts или logs.');
-                    // You might want to show a user-friendly error message here
                 }
             } catch (error) {
+                showNotification('Ошибка при чтении или парсинге файла JSON.', 'error');
                 console.error('Ошибка при чтении или парсинге файла JSON:', error);
-                // You might want to show a user-friendly error message here
             }
         };
         reader.readAsText(file);
@@ -500,6 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Failed to fetch rates:", error);
             app.loadingMessage.innerHTML = `<p class="text-red-400 text-sm">Не удалось загрузить курсы валют.</p>`;
+            showNotification('Не удалось загрузить курсы валют. Некоторые расчеты могут быть неточными.', 'error');
         } finally {
             renderAll();
         }
@@ -554,6 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleFormSubmit = (e) => {
         e.preventDefault();
         const id = app.modal.id.value;
+        const isEditing = !!id; // Check if we are editing or adding
         const newAccountData = {
             name: app.modal.name.value.trim(),
             amount: parseFloat(app.modal.amount.value),
@@ -568,12 +647,14 @@ document.addEventListener('DOMContentLoaded', () => {
             delete newAccountData.manualRate;
         }
 
-        if (id) {
+        if (isEditing) {
             const index = state.accounts.findIndex(acc => acc.id === id);
             state.accounts[index] = { ...state.accounts[index], ...newAccountData };
+            showNotification('Счет успешно обновлен!');
         } else {
             newAccountData.id = Date.now().toString();
             state.accounts.push(newAccountData);
+            showNotification('Новый счет успешно добавлен!');
         }
         
         saveAccounts();
@@ -590,6 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveAccounts();
         renderAll();
         toggleModal(false, app.deleteModal.el);
+        showNotification('Счет успешно удален!');
     };
     
     /**
@@ -642,6 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         saveLogs();
         renderLogs();
+        showNotification('Баланс успешно зафиксирован!');
     };
 
     // --- EVENT HANDLER SETUP ---
@@ -691,6 +774,9 @@ document.addEventListener('DOMContentLoaded', () => {
     init();
 });
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
